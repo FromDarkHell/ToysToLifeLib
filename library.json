@@ -1,0 +1,21 @@
+{
+  "name": "ToysToLifeLib",
+  "version": "0.0.1",
+  "description": "A flexible WiFi configuration manager for ESP32 with smart config, fallback options, and persistent storage",
+  "keywords": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FromDarkHell/ToysToLifeLib"
+  },
+  "authors": [
+    {
+      "name": "Joe Iliff",
+      "email": "fdh@fdh.one",
+      "url": "https://fdh.one",
+      "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": ["espressif32", "raspberrypi"],
+  "dependencies": {}
+}

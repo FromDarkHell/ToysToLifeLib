@@ -25,7 +25,7 @@ class Portal:
     ):
         self.verbose = verbose
         self.used_kernel_driver = False
-        self._cid = 0
+        self._cid = 1
 
         self.VENDOR_ID, self.PRODUCT_ID = USB_IDS[platform]
         self.platform = platform
@@ -94,7 +94,7 @@ class Portal:
             message = [*command, checksum]
 
             if self.platform == "xbox_360":
-                message = [0x0B, 16, *message]
+                message = [0x0B, 0x10, *message]
 
             assert len(message) <= 32
             while len(message) < 32:
@@ -107,6 +107,13 @@ class Portal:
         print(f"Sending packet: {self._bytes_to_hex(packet)}")
         self.dev.write(2, packet)
 
+        try:
+            response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
+            print(f"Received response: {self._bytes_to_hex(response)}")
+        except usb.core.USBError as e:
+            if e.args != ("Operation timed out",):
+                raise
+
     def connected(self) -> bool:
         dev: usb.core.Device = usb.core.find(idVendor=self.VENDOR_ID, idProduct=self.PRODUCT_ID)  # type: ignore
         if dev == None:
@@ -118,8 +125,8 @@ class Portal:
         # Startup
         _ENCODED = "(c) Disney 2013".encode("ascii")
         self._send_command([0x80, self.get_cid(), *_ENCODED])
-        response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
-        print(f"Received init response: {self._bytes_to_hex(response)}")
+        # response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
+        # print(f"Received init response: {self._bytes_to_hex(response)}")
 
     def switch_pad(self, pad_id: int, color: Color):
         """
@@ -214,4 +221,11 @@ if __name__ == "__main__":
 
     px.switch_pad(0, Colors.BLACK)
 
-    px.flash_pad(2, 20, 20, 128, Colors.RED)
+    px.switch_pad(1, Colors.RED)
+    px.switch_pad(2, Colors.GREEN)
+    px.switch_pad(3, Colors.BLUE)
+
+    # px.flash_pad(2, 20, 20, 128, Colors.RED)
+
+    while True:
+        time.sleep(0.1)
