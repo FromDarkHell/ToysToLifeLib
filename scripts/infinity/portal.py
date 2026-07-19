@@ -7,18 +7,16 @@ from typing import Dict, List, Literal, Optional, Tuple, Union
 import usb.core
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from util import Color
+from util import Color, Colors
 
 USB_IDS: Dict[str, Tuple[int, int]] = {
-    "xbox_360": (0x24C6, 0xFA01),
-    "ps3": (0x0E6F, 0x0241),
+    "xbox_360": (0x24C6, 0xFA00),
+    "ps3": (0x0E6F, 0x0129),
 }
 
 
-class Gateway:
-    """Represents a Lego Dimensions gateway/portal peripheral"""
-
-    ZONE_MAP = {0x1: "center", 0x2: "left", 0x3: "right"}
+class Portal:
+    """Represents a Disney Infinity portal peripheral"""
 
     MAX_LENGTH = 0x20
 
@@ -41,6 +39,10 @@ class Gateway:
 
     def _bytes_to_hex(self, bytes) -> str:
         return " ".join(format(x, "02X") for x in bytes)
+
+    def get_cid(self):
+        self._cid += 1
+        return self._cid
 
     def _init_usb(self):
         """
@@ -70,11 +72,8 @@ class Gateway:
 
         print(f"{self.dev}")
 
-        # Startup
-        _ENCODED = "(c) LEGO 2014".encode("ascii")
-        self._send_command([0xB0, self.get_cid(), *_ENCODED])
-        response = dev.read(0x81, Gateway.MAX_LENGTH, timeout=1_000)
-        print(f"Received init response: {self._bytes_to_hex(response)}")
+        self.wake()
+
         return dev
 
     def _send_command(self, command: List[int]):
@@ -82,11 +81,9 @@ class Gateway:
         assert len(command) <= 31
 
         def convert_to_packet(command: List[int]):
-            if command[0] != 0x55:
-                command.insert(0, 0x55)
+            if command[0] != 0xFF:
+                command.insert(0, 0xFF)
                 command.insert(1, len(command) - 1)
-
-            assert len(command) <= (29 if self.platform == "xbox_360" else 31)
 
             checksum = 0
             for word in command:
@@ -97,7 +94,7 @@ class Gateway:
             message = [*command, checksum]
 
             if self.platform == "xbox_360":
-                message = [0x0B, 0x16, *message]
+                message = [0x0B, 16, *message]
 
             assert len(message) <= 32
             while len(message) < 32:
@@ -108,7 +105,7 @@ class Gateway:
         packet = convert_to_packet(command)
 
         print(f"Sending packet: {self._bytes_to_hex(packet)}")
-        self.dev.write(1, packet)
+        self.dev.write(2, packet)
 
     def connected(self) -> bool:
         dev: usb.core.Device = usb.core.find(idVendor=self.VENDOR_ID, idProduct=self.PRODUCT_ID)  # type: ignore
@@ -117,8 +114,12 @@ class Gateway:
 
         return dev.address == self.dev.address
 
-    def clear_pads(self):
-        self.switch_pad(pad_id=0, color=Color(0, 0, 0))
+    def wake(self):
+        # Startup
+        _ENCODED = "(c) Disney 2013".encode("ascii")
+        self._send_command([0x80, self.get_cid(), *_ENCODED])
+        response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
+        print(f"Received init response: {self._bytes_to_hex(response)}")
 
     def switch_pad(self, pad_id: int, color: Color):
         """
@@ -127,7 +128,7 @@ class Gateway:
         Color values are clamped betwen 0 and 255, in RGB order
         """
 
-        command = [0xC0, self.get_cid(), pad_id, color.r, color.g, color.b]
+        command = [0x90, self.get_cid(), pad_id, color.r, color.g, color.b]
         self._send_command(command)
 
     def flash_pad(
@@ -139,7 +140,7 @@ class Gateway:
         color: Color,
     ):
         command = [
-            0xC3,
+            0x93,
             self.get_cid(),
             pad_id,
             on_length,
@@ -163,10 +164,10 @@ class Gateway:
 
         - `on_length`: A value of 0x00 is practically non-existant, and a value of 0xFF is ~25.5 seconds
         - `off_length`: A value of 0x00 is practically non-existant, and a value of 0xFF is ~25.5 seconds
-        - `pulse_count`: An odd value leaves pad in new colour, even leaves pad in old, except for 0x00, which does nothing. Values above 0xc6 dont stop.
+        - `pulse_count`: An odd value leaves pad in new colour, even leaves pad in old, except for 0x00, which does nothing. Values above 0x96 dont stop.
         """
         assert len(pad_data) == 3
-        command = [0xC7, self.get_cid()]
+        command = [0x97, self.get_cid()]
         for pad in pad_data:
             enable, on, off, pulse = 0, 0, 0, 0
             color = Color(0, 0, 0)
@@ -178,13 +179,22 @@ class Gateway:
         self._send_command(command)
 
     def fade_pad(self, pad_id: int, speed: int, count: int, color: Color):
-        command = [0xC2, self.get_cid(), pad_id, speed, count, color.r, color.g, color.b]
+        command = [
+            0x92,
+            self.get_cid(),
+            pad_id,
+            speed,
+            count,
+            color.r,
+            color.g,
+            color.b,
+        ]
 
         self._send_command(command)
 
     def fade_pads(self, pad_data: List[Optional[Tuple[int, int, Color]]]):
         assert len(pad_data) == 3
-        command = [0xC6, self.get_cid()]
+        command = [0x96, self.get_cid()]
         for pad in pad_data:
             enable, fade, count = 0, 0, 0
             color = Color(0, 0, 0)
@@ -197,45 +207,11 @@ class Gateway:
 
         self._send_command(command)
 
-    def get_cid(self):
-        self._cid += 1
-        return self._cid
 
-    def example_packet(self):
-        self._send_command(
-            [
-                0xC6,
-                self.get_cid(),
-                0x01,
-                0x00,
-                0x01,
-                0x4C,
-                0x20,
-                0x00,
-                0x01,
-                0x00,
-                0x01,
-                0x00,
-                0x20,
-                0x07,
-                0x01,
-                0x00,
-                0x01,
-                0x4C,
-                0x00,
-                0x07,
-            ]
-        )
+if __name__ == "__main__":
+    px = Portal("xbox_360")
+    time.sleep(0.5)
 
-    def sniff(self, attempts: int = 50):
-        collections = 0
-        while collections < attempts:
-            try:
-                response = self.dev.read(0x81, Gateway.MAX_LENGTH, timeout=1_000)
-                print(f"[{time.time()}]: {bytes(response).hex()}")
+    px.switch_pad(0, Colors.BLACK)
 
-                collections += 1
-            except usb.core.USBError as e:
-                data = None
-                if e.args == ("Operation timed out",):
-                    continue
+    px.flash_pad(2, 20, 20, 128, Colors.RED)

@@ -1,8 +1,13 @@
 import argparse
-import struct
+import sys
 import time
 import traceback
+from pathlib import Path
+
 from gateway import Gateway
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from util import Color
 
 
 def main():
@@ -12,14 +17,13 @@ def main():
 
     args = parser.parse_args()
 
-    hex_color = args.color.strip("#")
-    color_tuple = struct.unpack("BBB", bytes.fromhex(hex_color))
+    color = Color.from_hex(args.color)
 
     while True:
         try:
             gateway = Gateway(platform="xbox_360", verbose=True)
 
-            gateway.switch_pad(0, color_tuple)
+            gateway.switch_pad(0, color)
 
             while gateway.connected():
                 time.sleep(args.delay)
