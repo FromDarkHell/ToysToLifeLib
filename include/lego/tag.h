@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "tags/NTAG213.h"
+#include "tags/ntag213.h"
 #include "util/reader.h"
 
 using namespace Tags;
