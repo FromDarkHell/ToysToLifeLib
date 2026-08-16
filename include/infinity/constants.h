@@ -40,9 +40,7 @@ namespace DisneyInfinity
      */
     enum class GatewayCommand : uint8_t
     {
-        // A WAKE packet is used to start the handshaking process with a portal. Unlike LEGO
-        // Dimensions, there's no SEED/CHALLENGE step afterwards - the portal doesn't encrypt
-        // anything.
+        // A WAKE packet is used to start the handshaking process with a portal.
         WAKE = 0x80,
 
         // A SEED packet is the next step in the handshaking process, and involves setting the PRNG to

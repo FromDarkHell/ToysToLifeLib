@@ -23,6 +23,24 @@ namespace LEGODimensions
         0x24C6, 0xFA01};
 
     /**
+     * @brief USB descriptor strings/version for a PS3 / PC playpad (original PDP reader).
+     *
+     */
+    constexpr const char *PS3_PRODUCT_NAME = "LEGO READER V2.10";
+    constexpr const char *PS3_MANUFACTURER = "PDP LIMITED. ";
+    constexpr const char *PS3_SERIAL = "P.D.P.000000";
+    constexpr uint16_t PS3_DEVICE_VERSION = 0x0100;
+
+    /**
+     * @brief USB descriptor strings/version for an X360 playpad.
+     *
+     */
+    constexpr const char *X360_PRODUCT_NAME = "LEGO(R) DIMENSIONS(TM)";
+    constexpr const char *X360_MANUFACTURER = "Warner Bros.";
+    constexpr const char *X360_SERIAL = "03108E28";
+    constexpr uint16_t X360_DEVICE_VERSION = 0x0100;
+
+    /**
      * @brief A byte enum defining whether or not a packet is a command (aka sent by the game -> pad
      * *or* an "event" which is pad -> game)
      *

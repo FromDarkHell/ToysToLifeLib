@@ -125,8 +125,6 @@ class Portal:
         # Startup
         _ENCODED = "(c) Disney 2013".encode("ascii")
         self._send_command([0x80, self.get_cid(), *_ENCODED])
-        # response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
-        # print(f"Received init response: {self._bytes_to_hex(response)}")
 
     def switch_pad(self, pad_id: int, color: Color):
         """

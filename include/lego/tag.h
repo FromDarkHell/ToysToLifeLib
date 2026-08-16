@@ -75,7 +75,7 @@ namespace LEGODimensions
      *   Page 26 (offset 0x98) : 0x0001       - uint16 BE (verification)
      * For some reason, these pages can also get offset by 0x12 when being written *shrug*
      */
-    class VehicleTag : public ToyTag
+    class VehicleTag : public virtual ToyTag
     {
     public:
         uint32_t upgradesP23;
@@ -141,7 +141,7 @@ namespace LEGODimensions
      * CMD_MODEL command, and not written into the NFC byte pages directly. The raw buffer stays mostly
      * zeroed - the game basically only checks that page 26 is 0x00.
      */
-    class CharacterTag : public ToyTag
+    class CharacterTag : public virtual ToyTag
     {
     public:
         CharacterTag() : ToyTag() { type = ToyTagType::Character; }
