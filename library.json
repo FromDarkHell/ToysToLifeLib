@@ -17,5 +17,7 @@
   ],
   "frameworks": "arduino",
   "platforms": ["espressif32", "raspberrypi"],
-  "dependencies": {}
+  "dependencies": {
+    "rweather/Crypto": "^0.4.0"
+  }
 }

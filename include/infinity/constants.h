@@ -11,7 +11,9 @@ namespace DisneyInfinity
 {
     constexpr int PLAYPAD_INTERFACE = 0x0000;
 
-    constexpr int PLAYPAD_WRITE_EP = 0x0002;
+    constexpr int PLAYPAD_WRITE_EP_PS3 = 0x0001;
+    constexpr int PLAYPAD_WRITE_EP_360 = 0x0002;
+
     constexpr int PLAYPAD_READ_EP = 0x0081;
 
     constexpr int PLAYPAD_MAX_PACKET_SIZE = 0x0020;
@@ -60,6 +62,10 @@ namespace DisneyInfinity
         // cycles it y amount of times
         FLASH = 0x93,
 
+        // I only see this packet appear on boot up/initialization and shutdown...?
+        // It's consistently using the same data, and it doesn't look super
+        UNK95 = 0x95,
+
         // Fades all pads in a single command to a specific color over x amount of ticks and cycles it y
         // amount of times
         FADAL = 0x96,
@@ -76,6 +82,10 @@ namespace DisneyInfinity
 
         // Gets the raw UID of a figure at a given index
         MODEL = 0xB4,
+
+        // Purpose unconfirmed ("get status?" per known emulator implementations); real hardware
+        // answers it with the same blank acknowledgement as the color commands.
+        STATUS = 0xB5,
     };
 
     static ToypadPlatform getToypadPlatformFromIDs(USBIdentifier identity)

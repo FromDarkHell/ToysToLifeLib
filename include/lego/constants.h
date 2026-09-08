@@ -82,12 +82,12 @@ namespace LEGODimensions
         // Fades all pads in a single command to a specific color over x amount of ticks and cycles it y
         // amount of times
         FADAL = 0xC6,
+
         // Flashes all pads in a single command to a specific color over x amount of ticks and cycles it
         // y amount of times
-
         FLSAL = 0xC7,
-        // Colors all pads in a single command to a specific color
 
+        // Colors all pads in a single command to a specific color
         COLAL = 0xC8,
 
         // Returns an array of bitfields of all of the current tag locations and their indexes

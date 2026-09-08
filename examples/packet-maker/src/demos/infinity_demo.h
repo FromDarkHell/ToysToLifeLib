@@ -1,4 +1,4 @@
 #pragma once
 
-// Placeholder until Disney Infinity packet support lands in the library.
+// Builds/parses a handful of Disney Infinity packets and prints them over Serial.
 void runInfinityDemo();

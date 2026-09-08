@@ -105,7 +105,11 @@ class Portal:
         packet = convert_to_packet(command)
 
         print(f"Sending packet: {self._bytes_to_hex(packet)}")
-        self.dev.write(2, packet)
+
+        if self.platform == "ps3":
+            self.dev.write(0x01, packet)
+        else:
+            self.dev.write(0x02, packet)
 
         try:
             response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
@@ -212,9 +216,22 @@ class Portal:
 
         self._send_command(command)
 
+    def sniff(self, attempts: int = 50):
+        collections = 0
+        while collections < attempts:
+            try:
+                response = self.dev.read(0x81, Portal.MAX_LENGTH, timeout=1_000)
+                print(f"[{time.time()}]: {bytes(response).hex()}")
+
+                collections += 1
+            except usb.core.USBError as e:
+                data = None
+                if e.args == ("Operation timed out",):
+                    continue
+
 
 if __name__ == "__main__":
-    px = Portal("xbox_360")
+    px = Portal("ps3")
     time.sleep(0.5)
 
     px.switch_pad(0, Colors.BLACK)
@@ -225,5 +242,4 @@ if __name__ == "__main__":
 
     # px.flash_pad(2, 20, 20, 128, Colors.RED)
 
-    while True:
-        time.sleep(0.1)
+    px.sniff()
