@@ -25,8 +25,7 @@ namespace DisneyInfinity
         0x24C6, 0xFA00};
 
     /**
-     * @brief Unlike LEGO Dimensions (which reuses 0x55 for both commands and responses), Disney
-     * Infinity uses a distinct type byte for commands (0xFF), responses (0xAA), and events (0xAB).
+     * @brief Disney Infinity uses a distinct type byte for commands (0xFF), responses (0xAA), and events (0xAB).
      *
      */
     enum class PacketType : uint8_t

@@ -8,8 +8,7 @@
 #include <cstdlib>
 
 /**
- * @brief Shared packet structure for toys-to-life protocols that happen to be (near) byte-identical
- * at the transport level, e.g. LEGO Dimensions and Disney Infinity.
+ * @brief Shared packet structure for protocols
  */
 namespace Common
 {

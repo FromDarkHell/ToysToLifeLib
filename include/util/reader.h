@@ -25,6 +25,16 @@ public:
         return ((uint16_t)buf[offset] << 8) | (uint16_t)buf[offset + 1];
     }
 
+    static uint64_t readUInt64LE(const uint8_t *buf, size_t offset = 0)
+    {
+        return (uint64_t)readUInt32LE(buf, offset) | ((uint64_t)readUInt32LE(buf, offset + 4) << 32);
+    }
+
+    static uint64_t readUInt64BE(const uint8_t *buf, size_t offset = 0)
+    {
+        return ((uint64_t)readUInt32BE(buf, offset) << 32) | (uint64_t)readUInt32BE(buf, offset + 4);
+    }
+
     static void writeUInt32LE(uint8_t *buf, int offset, uint32_t value)
     {
         buf[offset] = (uint8_t)(value & 0xFF);
@@ -39,6 +49,18 @@ public:
         buf[offset + 2] = (uint8_t)((value >> 8) & 0xFF);
         buf[offset + 1] = (uint8_t)((value >> 16) & 0xFF);
         buf[offset + 0] = (uint8_t)((value >> 24) & 0xFF);
+    }
+
+    static void writeUInt64LE(uint8_t *buf, int offset, uint64_t value)
+    {
+        writeUInt32LE(buf, offset, (uint32_t)(value & 0xFFFFFFFF));
+        writeUInt32LE(buf, offset + 4, (uint32_t)(value >> 32));
+    }
+
+    static void writeUInt64BE(uint8_t *buf, int offset, uint64_t value)
+    {
+        writeUInt32BE(buf, offset, (uint32_t)(value >> 32));
+        writeUInt32BE(buf, offset + 4, (uint32_t)(value & 0xFFFFFFFF));
     }
 
     static void writeUInt16LE(uint8_t *buf, int offset, uint16_t value)

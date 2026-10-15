@@ -10,8 +10,7 @@ namespace LEGODimensions
 {
     /**
      * @brief Base class for all Lego Dimensions toy tags.
-     *        Extends NTAG213 with game metadata (id, name, padIndex, type)
-     *        as well as JSON serialization / deserialization.
+     *        Extends NTAG213 with game metadata (id, padIndex, type)
      */
     class ToyTag : public NTAG213
     {
@@ -21,12 +20,6 @@ namespace LEGODimensions
          *
          */
         uint16_t id;
-
-        /**
-         * @brief A string describing the tags name, used for display/serialization purposes
-         *
-         */
-        char name[48];
 
         /**
          * @brief The current location of the tag on the playpad
@@ -42,7 +35,6 @@ namespace LEGODimensions
 
         ToyTag() : NTAG213(), id(0), padIndex(TagIndex::Unplaced), type(ToyTagType::Unknown)
         {
-            name[0] = '\0';
             setUID(randomUID()); // Generated once, lives in _buf permanently
         }
 
@@ -89,12 +81,11 @@ namespace LEGODimensions
 
         VehicleTag() : ToyTag(), upgradesP23(0), upgradesP25(0) { type = ToyTagType::Vehicle; }
 
-        VehicleTag(uint16_t vehicleId, const char *vehicleName, uint32_t upg23 = 0, uint32_t upg25 = 0)
+        VehicleTag(uint16_t vehicleId, uint32_t upg23 = 0, uint32_t upg25 = 0)
             : ToyTag(), upgradesP23(upg23), upgradesP25(upg25)
         {
             type = ToyTagType::Vehicle;
             id = vehicleId;
-            strlcpy(name, vehicleName, sizeof(name));
             commitToBuffer();
         }
 
@@ -146,11 +137,10 @@ namespace LEGODimensions
     public:
         CharacterTag() : ToyTag() { type = ToyTagType::Character; }
 
-        CharacterTag(uint16_t charId, const char *charName) : ToyTag()
+        CharacterTag(uint16_t charId) : ToyTag()
         {
             type = ToyTagType::Character;
             id = charId;
-            strlcpy(name, charName, sizeof(name));
             // Page 26 must be 0x00 for character verification - already zero
             // from NTAG213's memset, but we assert it explicitly for clarity.
             Reader::writeUInt32BE(_buf, 0x98, 0x000000);

@@ -3,6 +3,7 @@
 
 #include "lego/constants.h"
 #include "infinity/constants.h"
+#include "kamenrider/constants.h"
 
 namespace ToysToLifeLib
 {
@@ -21,6 +22,10 @@ namespace ToysToLifeLib
         platform = LEGODimensions::getToypadPlatformFromIDs(identification);
         if (platform != ToypadPlatform::UNK)
             return {platform, ToypadType::LEGO_DIMENSIONS};
+
+        platform = KamenRider::getToypadPlatformFromIDs(identification);
+        if (platform != ToypadPlatform::UNK)
+            return {platform, ToypadType::KAMEN_RIDER};
 
         return {ToypadPlatform::UNK, ToypadType::UNK};
     }

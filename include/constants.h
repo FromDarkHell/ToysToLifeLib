@@ -36,6 +36,7 @@ namespace ToysToLifeLib
     {
         LEGO_DIMENSIONS = 0x00,
         DISNEY_INFINITY = 0x01,
+        KAMEN_RIDER = 0x02,
 
         UNK = 0xFF
     };

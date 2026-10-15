@@ -116,7 +116,6 @@ namespace Tags
          * @brief Randomly generates a NXP MIFARE UID
          * The first byte is the NXP vendor ID
          * Bytes 1-6 are all randomly generated
-         * The 7th byte is a constant (?)
          *
          * @return uint64_t Returns all 7 bytes packed into a uint64_t in little endian order
          */
@@ -140,6 +139,16 @@ namespace Tags
             }
 
             return out;
+        }
+
+        /**
+         * @brief Generates a new random UID via `randomUID()` and stores it in the tag's buffer.
+         *
+         */
+        void randomizeUID()
+        {
+            uint64_t uid = randomUID();
+            setUID(reinterpret_cast<const uint8_t *>(&uid));
         }
     };
 

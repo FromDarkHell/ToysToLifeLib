@@ -36,13 +36,13 @@ void runDimensionsDemo()
     Serial.println(seedResponse.toHexString());
 
     // Create a couple of toy tags and dump their raw NFC buffers
-    CharacterTag gandalf(0x00A5, "Gandalf");
+    CharacterTag gandalf(0x00A5);
     char gandalfUid[15];
     gandalf.getUIDStr(gandalfUid);
-    Serial.printf("CharacterTag '%s' (id=0x%04X, uid=%s)\n", gandalf.name, gandalf.id, gandalfUid);
+    Serial.printf("CharacterTag (id=0x%04X, uid=%s)\n", gandalf.id, gandalfUid);
 
-    VehicleTag cart(0x01F4, "Wizard's Cart", /*upg23=*/0, /*upg25=*/0);
+    VehicleTag cart(0x01F4, /*upg23=*/0, /*upg25=*/0);
     char cartUid[15];
     cart.getUIDStr(cartUid);
-    Serial.printf("VehicleTag '%s' (id=0x%04X, uid=%s)\n", cart.name, cart.id, cartUid);
+    Serial.printf("VehicleTag (id=0x%04X, uid=%s)\n", cart.id, cartUid);
 }

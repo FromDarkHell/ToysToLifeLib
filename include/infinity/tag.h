@@ -14,6 +14,12 @@ namespace DisneyInfinity
     class Figure : public MIFARE_S20
     {
     public:
+        /**
+         * @brief An ID describing the figure in the JSON database of characters/playsets/discs
+         *
+         */
+        uint32_t id;
+
         /// @brief Whether a figure is currently placed on the pad.
         bool present;
 
@@ -21,7 +27,12 @@ namespace DisneyInfinity
         // 0xFF means it was not placed.
         uint8_t orderAdded;
 
-        Figure() : present(false), orderAdded(0xFF) {}
+        Figure() : id(0), present(false), orderAdded(0xFF) { randomizeUID(); }
+
+        explicit Figure(uint32_t figureId) : id(figureId), present(false), orderAdded(0xFF)
+        {
+            randomizeUID();
+        }
 
         /// @brief Maps a game-side block index to its actual offset in the storage buffer.
         static uint8_t toStorageBlock(uint8_t block) { return block == 0 ? 1 : block * 4; }

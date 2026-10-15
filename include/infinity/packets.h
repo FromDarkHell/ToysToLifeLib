@@ -5,8 +5,8 @@ namespace DisneyInfinity
 {
     /**
      * @brief A WAKE packet is the first step of the handshaking process, sent by the game to the
-     * portal to kick things off. Unlike Dimensions, there is no encryption.
-     * Instead, Disney Infinity scrambles/descrambles values bit-by-bit (see InfinityPRNG).
+     * portal to kick things off.
+     * Disney Infinity scrambles/descrambles values bit-by-bit (see InfinityPRNG).
      *
      */
     struct WakePacket : CommandPacket
@@ -226,8 +226,7 @@ namespace DisneyInfinity
 
     /**
      * @brief A FLSAL packet lets you flash all three pads in a single packet, each with its own
-     * enable/color/rate. This mirrors LEGO Dimensions' FLSHALL, not its FLSAL (there's no
-     * per-location-byte variant in Disney Infinity).
+     * enable/color/rate.
      *
      */
     struct FlashAllPacket : CommandPacket
